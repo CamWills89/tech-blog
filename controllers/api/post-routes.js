@@ -67,12 +67,12 @@ router.get("/:id", (req, res) => {
 });
 
 //POST /api/posts/
-router.post("/", (req, res) => {
+router.post("/", withAuth, (req, res) => {
   //creating a single post
   Post.create({
     title: req.body.title,
     content: req.body.content,
-    user_id: req.body.user_id
+    user_id: req.session.user_id
   })
     .then((dbPostData) => res.json(dbPostData))
     .catch((err) => {
@@ -82,7 +82,7 @@ router.post("/", (req, res) => {
 });
 
 // PUT api/posts/id
-router.put("/:id", (req, res) => {
+router.put("/:id", withAuth, (req, res) => {
   // Update a post
   Post.update(
     {
@@ -109,7 +109,7 @@ router.put("/:id", (req, res) => {
 });
 
 //DELETE api/posts/id
-router.delete("/:id", (req, res) => {
+router.delete("/:id", withAuth, (req, res) => {
   //delete a single post
   Post.destroy({
     where: {
