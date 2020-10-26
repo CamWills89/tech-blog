@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { User, Post, Comment } = require("../../models");
-//importin AuthGaurd
+//importing AuthGaurd
 const withAuth = require('../../utils/auth');
 
 // GET /api/users
@@ -66,13 +66,13 @@ router.post("/", (req, res) => {
     //to store user data during session
     .then((dbUserData) => {
       //create the session and then run the callback function once complete.
-      req.session.save(() => {
-        req.session.user_id = dbUserData.id;
-        req.session.username = dbUserData.username;
-        req.session.loggedIn = true;
+    //   req.session.save(() => {
+    //     req.session.user_id = dbUserData.id;
+    //     req.session.username = dbUserData.username;
+    //     req.session.loggedIn = true;
 
         res.json(dbUserData);
-      });
+    //   });
     })
     .catch((err) => {
       console.log(err);
@@ -125,6 +125,7 @@ router.post("/logout", withAuth, (req, res) => {
 // PUT /api/users/1
 router.put("/:id", (req, res) => {
   User.update(req.body, {
+    //so each hook is called on each update
     individualHooks: true,
     where: {
       id: req.params.id,
