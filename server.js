@@ -5,10 +5,10 @@ const path = require("path");
 // //import the handlebars helper functions
 // const helpers = require("./utils/helpers");
 // //setup Handlebars.js as the template engine
-// const exphbs = require("express-handlebars");
+const exphbs = require("express-handlebars");
 
 const app = express();
-// const hbs = exphbs.create({ helpers });
+const hbs = exphbs.create({  }); //helpers
 const PORT = process.env.PORT || 3001;
 //allows us to use express-session and then link to sequelize store (for cookies)
 // const session = require("express-session");
@@ -34,8 +34,8 @@ app.use(express.static(path.join(__dirname, "public")));
 //sets up an Express.js session and connects the session to our Sequelize database
 // app.use(session(sess));
 
-// app.engine("handlebars", hbs.engine);
-// app.set("view engine", "handlebars");
+app.engine("handlebars", hbs.engine);
+app.set("view engine", "handlebars");
 // turn on routes
 app.use(routes);
 
