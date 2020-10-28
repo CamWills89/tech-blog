@@ -79,7 +79,9 @@ router.post("/", (req, res) => {
 
 // POST to identify users
 router.post("/login", (req, res) => {
-  // expects {username: 'lernantino', password: 'password1234'}
+  console.log("login route accessed")
+  console.log(req.session)
+  // expects {username: 'Cameron', password: 'test1'}
   User.findOne({
     where: {
       username: req.body.username,
