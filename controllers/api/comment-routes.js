@@ -6,7 +6,7 @@ const withAuth = require("../../utils/auth");
 //GET all api/commments
 router.get("/", (req, res) => {
   // Access our User model and run .findAll() method
-  Comment.findAll()
+  Comment.findAll({})
     .then((dbCommentData) => res.json(dbCommentData))
     .catch((err) => {
       console.log(err);
@@ -29,25 +29,25 @@ router.get("/:id", (req, res) => {
 });
 
 //POST a comment - api/comments
-router.post("/", withAuth, (req, res) => {
+router.post("/", (req, res) => {
   // check the session, IF statement to ensure only logged in users can comment
-    if (req.session) {
-  Comment.create({
-    comment_text: req.body.comment_text,
-    post_id: req.body.post_id,
-    // use the id from the session so you have to be logged in
-    user_id: req.session.user_id,
-  })
-    .then((dbCommentData) => res.json(dbCommentData))
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json(err);
-    });
-    }
+  if (req.session) {
+    Comment.create({
+      comment_text: req.body.comment_text,
+      post_id: req.body.post_id,
+      // use the id from the session
+      user_id: req.session.user_id,
+    })
+      .then((dbCommentData) => res.json(dbCommentData))
+      .catch((err) => {
+        console.log(err);
+        res.status(400).json(err);
+      });
+  }
 });
 
 //UPDATE a comment - api/comments/id
-router.put("/:id", withAuth, (req, res) => {
+router.put("/:id", (req, res) => {
   Comment.update(
     {
       comment_text: req.body.comment_text,
@@ -72,7 +72,7 @@ router.put("/:id", withAuth, (req, res) => {
 });
 
 //DELETE a comment - api/comments/id
-router.delete("/:id", withAuth, (req, res) => {
+router.delete("/:id", (req, res) => {
   Comment.destroy({
     where: {
       id: req.params.id,

@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { Post, User, Comment } = require("../../models");
 //importin AuthGaurd
-const withAuth = require("../../utils/auth");
+// const withAuth = require("../../utils/auth");
 
 // GET all api/posts
 router.get("/", (req, res) => {
@@ -67,7 +67,7 @@ router.get("/:id", (req, res) => {
 });
 
 //POST /api/posts/
-router.post("/", withAuth, (req, res) => {
+router.post("/", (req, res) => {
   //creating a single post
   Post.create({
     title: req.body.title,
@@ -82,7 +82,7 @@ router.post("/", withAuth, (req, res) => {
 });
 
 // PUT api/posts/id
-router.put("/:id", withAuth, (req, res) => {
+router.put("/:id", (req, res) => {
   // Update a post
   Post.update(
     {
@@ -109,7 +109,7 @@ router.put("/:id", withAuth, (req, res) => {
 });
 
 //DELETE api/posts/id
-router.delete("/:id", withAuth, (req, res) => {
+router.delete("/:id", (req, res) => {
   //delete a single post
   Post.destroy({
     where: {

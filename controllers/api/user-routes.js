@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { User, Post, Comment } = require("../../models");
 //importing AuthGaurd
-const withAuth = require('../../utils/auth');
+// const withAuth = require('../../utils/auth');
 
 // GET /api/users
 router.get("/", (req, res) => {
@@ -56,7 +56,7 @@ router.get("/:id", (req, res) => {
 });
 
 // POST /api/users
-router.post("/", withAuth, (req, res) => {
+router.post("/", (req, res) => {
   // expects {username: 'Cameron', password: 'password1234'} (mockup doesnt need email)
   User.create({
     username: req.body.username,
@@ -66,13 +66,13 @@ router.post("/", withAuth, (req, res) => {
     //to store user data during session
     .then((dbUserData) => {
       //create the session and then run the callback function once complete.
-    //   req.session.save(() => {
-    //     req.session.user_id = dbUserData.id;
-    //     req.session.username = dbUserData.username;
-    //     req.session.loggedIn = true;
+      req.session.save(() => {
+        req.session.user_id = dbUserData.id;
+        req.session.username = dbUserData.username;
+        req.session.loggedIn = true;
 
         res.json(dbUserData);
-    //   });
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -87,32 +87,37 @@ router.post("/login", (req, res) => {
     where: {
       username: req.body.username,
     },
-  }).then((dbUserData) => {
-    if (!dbUserData) {
-      res.status(400).json({ message: "No user with that username!" });
-      return;
-    }
-    // Verify user
-    const validPassword = dbUserData.checkPassword(req.body.password);
-    if (!validPassword) {
-      res.status(400).json({ message: "Incorrect password!" });
-      return;
-    }
+  })
+    .then((dbUserData) => {
+      if (!dbUserData) {
+        res.status(400).json({ message: "No user with that username!" });
+        return;
+      }
+      // res.json({ user: dbUserData});
+      // verify user
+      const validPassword = dbUserData.checkPassword(req.body.password);
 
-    //saving the login session
-    req.session.save(() => {
-      // declare session variables
-      req.session.user_id = dbUserData.id;
-      req.session.username = dbUserData.username;
-      req.session.loggedIn = true;
+      if (!validPassword) {
+        res.status(400).json({ message: "Incorrect password!" });
+        return;
+      }
+      req.session.save(() => {
+        // declare session variables
+        req.session.user_id = dbUserData.id;
+        req.session.username = dbUserData.username;
+        req.session.loggedIn = true;
 
-      res.json({ user: dbUserData, message: "You are now logged in!" });
+        res.json({ user: dbUserData, message: "You are now logged in!" });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
     });
-  });
 });
 
 // Creating a user log out route
-router.post("/logout", withAuth, (req, res) => {
+router.post("/logout", (req, res) => {
   if (req.session.loggedIn) {
     req.session.destroy(() => {
       res.status(204).end();
@@ -123,7 +128,7 @@ router.post("/logout", withAuth, (req, res) => {
 });
 
 // PUT /api/users/1
-router.put("/:id", withAuth, (req, res) => {
+router.put("/:id", (req, res) => {
   User.update(req.body, {
     //so each hook is called on each update
     individualHooks: true,
@@ -145,7 +150,7 @@ router.put("/:id", withAuth, (req, res) => {
 });
 
 // DELETE /api/users/1
-router.delete("/:id", withAuth, (req, res) => {
+router.delete("/:id", (req, res) => {
   User.destroy({
     where: {
       id: req.params.id,
