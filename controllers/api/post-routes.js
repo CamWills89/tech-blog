@@ -1,19 +1,20 @@
 const router = require("express").Router();
 const { Post, User, Comment } = require("../../models");
-//importin AuthGaurd
-// const withAuth = require("../../utils/auth");
+const sequelize = require("../../config/connection");
+const withAuth = require("../../utils/auth");
 
-// GET all api/posts
+// GET all posts
 router.get("/", (req, res) => {
+  console.log("======================");
   Post.findAll({
-    attributes: ["id", "content", "title", "created_at"],
+    // Query configuration
+    attributes: ["id", "title", "content", "created_at"],
     order: [["created_at", "DESC"]],
     include: [
       {
         model: User,
         attributes: ["username"],
       },
-      // include the Comment model here:
       {
         model: Comment,
         attributes: ["id", "comment_text", "post_id", "user_id", "created_at"],
@@ -24,13 +25,14 @@ router.get("/", (req, res) => {
       },
     ],
   })
-    .then((dbPostData) => res.json(dbPostData))
+    .then((dbPostData) => res.json(dbPostData.reverse()))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
     });
 });
-// GET a single api/post/id
+
+// GET a single post
 router.get("/:id", (req, res) => {
   Post.findOne({
     where: {
@@ -42,7 +44,6 @@ router.get("/:id", (req, res) => {
         model: User,
         attributes: ["username"],
       },
-      // include the Comment model here:
       {
         model: Comment,
         attributes: ["id", "comment_text", "post_id", "user_id", "created_at"],
@@ -66,13 +67,13 @@ router.get("/:id", (req, res) => {
     });
 });
 
-//POST /api/posts/
-router.post("/", (req, res) => {
-  //creating a single post
+// creating a post
+router.post("/", withAuth, (req, res) => {
+  // create 1 post
   Post.create({
     title: req.body.title,
     content: req.body.content,
-    user_id: req.session.user_id
+    user_id: req.session.user_id,
   })
     .then((dbPostData) => res.json(dbPostData))
     .catch((err) => {
@@ -81,9 +82,8 @@ router.post("/", (req, res) => {
     });
 });
 
-// PUT api/posts/id
-router.put("/:id", (req, res) => {
-  // Update a post
+// update a post title
+router.put("/:id", withAuth, (req, res) => {
   Post.update(
     {
       title: req.body.title,
@@ -108,9 +108,8 @@ router.put("/:id", (req, res) => {
     });
 });
 
-//DELETE api/posts/id
-router.delete("/:id", (req, res) => {
-  //delete a single post
+// delete a post
+router.delete("/:id", withAuth, (req, res) => {
   Post.destroy({
     where: {
       id: req.params.id,

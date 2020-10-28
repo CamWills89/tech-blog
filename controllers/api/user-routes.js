@@ -1,10 +1,9 @@
 const router = require("express").Router();
 const { User, Post, Comment } = require("../../models");
-//importing AuthGaurd
-// const withAuth = require('../../utils/auth');
 
 // GET /api/users
 router.get("/", (req, res) => {
+  // access our user model and run .findAll() method -- similar to SELECT * FROM users;
   User.findAll({
     attributes: { exclude: ["password"] },
   })
@@ -55,17 +54,15 @@ router.get("/:id", (req, res) => {
     });
 });
 
-// POST /api/users
+// POST /api/users - similar to INSERT INTO users / VALUES
 router.post("/", (req, res) => {
-  // expects {username: 'Cameron', password: 'password1234'} (mockup doesnt need email)
+  // expects {username: 'Lernantino', password: 'password1234'}
   User.create({
     username: req.body.username,
     password: req.body.password,
   })
-    //accessing the session information in the routes, giving server access
-    //to store user data during session
+    // store user data during session
     .then((dbUserData) => {
-      //create the session and then run the callback function once complete.
       req.session.save(() => {
         req.session.user_id = dbUserData.id;
         req.session.username = dbUserData.username;
@@ -80,9 +77,9 @@ router.post("/", (req, res) => {
     });
 });
 
-//creating a user login route
+// POST to identify users
 router.post("/login", (req, res) => {
-  // expects {username: 'Cameron', password: 'password1234'}
+  // expects {username: 'lernantino', password: 'password1234'}
   User.findOne({
     where: {
       username: req.body.username,
@@ -116,7 +113,7 @@ router.post("/login", (req, res) => {
     });
 });
 
-// Creating a user log out route
+// users to log out
 router.post("/logout", (req, res) => {
   if (req.session.loggedIn) {
     req.session.destroy(() => {
@@ -127,10 +124,11 @@ router.post("/logout", (req, res) => {
   }
 });
 
-// PUT /api/users/1
+// PUT /api/users/1 - similar to UPDATE
 router.put("/:id", (req, res) => {
+  // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
+
   User.update(req.body, {
-    //so each hook is called on each update
     individualHooks: true,
     where: {
       id: req.params.id,
