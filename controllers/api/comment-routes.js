@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { Comment } = require("../../models");
 //importin AuthGaurd
-const withAuth = require("../../utils/auth");
+// const withAuth = require("../../utils/auth");
 
 //GET all api/commments
 router.get("/", (req, res) => {
