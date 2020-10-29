@@ -22,7 +22,7 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const sess = {
   secret: "Super secret secret",
   //set and age limit to the cookies, so they expire after a time
-  cookie: { maxAge: 36000 },
+  cookie: { maxAge: 90000 },
   resave: false,
   saveUninitialized: true,
   store: new SequelizeStore({
