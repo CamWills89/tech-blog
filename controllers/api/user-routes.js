@@ -92,7 +92,6 @@ router.post("/login", (req, res) => {
         res.status(400).json({ message: "No user with that username!" });
         return;
       }
-      // res.json({ user: dbUserData});
       // verify user
       const validPassword = dbUserData.checkPassword(req.body.password);
 
@@ -126,10 +125,8 @@ router.post("/logout", (req, res) => {
   }
 });
 
-// PUT /api/users/1 - similar to UPDATE
+// PUT /api/users/1 
 router.put("/:id", (req, res) => {
-  // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
-
   User.update(req.body, {
     individualHooks: true,
     where: {

@@ -33,16 +33,16 @@ router.get("/", (req, res) => {
     });
 });
 
-// redirecting users to homepage once they log in
 router.get("/login", (req, res) => {
   if (req.session.loggedIn) {
+    // redirecting users to homepage once they log in
     res.redirect("/");
     return;
   }
   res.render("login");
 });
 
-// redirecting users to sign in page once they sign up
+// render the signup page
 router.get("/signup", (req, res) => {
   res.render("signup");
 });
@@ -88,7 +88,7 @@ router.get("/post/:id", (req, res) => {
     });
 });
 
-// redirecting users to see all their posts with comments
+
 router.get("/posts-comments", (req, res) => {
   Post.findOne({
     where: {
