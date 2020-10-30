@@ -110,27 +110,14 @@ router.put("/:id", withAuth, (req, res) => {
 
 // DELETE api/posts/id -- delete a post
 router.delete("/:id", withAuth, (req, res) => {
-  // Post.destroy({
-  //   where: {
-  //     id: req.params.id,
-  //   },
-  // })
-  //   .then((dbPostData) => {
-  //     if (!dbPostData) {
-  //       res.status(404).json({ message: "No post found with this id" });
-  //       return;
-  //     }
-  //     res.json(dbPostData);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //     res.status(500).json(err);
-  //   });
+  //adding in ability to delete post that has comments attached to 
+  //get around foreign key constraints
   Post.findOne({
     where: {id: req.params.id},
     include: [Comment]
   })
   .then(post => {
+    //we find comments, delete them and then delete post
     post.comments.forEach(comment => {
       comment.destroy();
     })
